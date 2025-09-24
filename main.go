@@ -14,9 +14,9 @@ import (
 
 const (
 	// Hardcoded interface class/subclass/protocol to block
-	BlockIFClass    = 0x08 // Mass storage
-	BlockIFSubClass = 0x06
-	BlockIFProtocol = 0x32 // example: Bulk-Only Transport (80)
+	BlockIFClass    = 8 // Mass storage
+	BlockIFSubClass = 6
+	BlockIFProtocol = 50 // example: Bulk-Only Transport (80)
 )
 
 func main() {
@@ -39,10 +39,8 @@ func main() {
 	fmt.Println("Monitoring USB add/remove events...")
 
 	for d := range ch {
-		if d == nil {
-			continue // avoid nil panic
-		}
-		if d.Subsystem() != "usb" || d.Action() != "add" {
+
+		if d == nil || d.Subsystem() != "usb" || d.Action() != "add" {
 			continue
 		}
 
@@ -69,7 +67,7 @@ func main() {
 			ifSub := readHexFile(ifPath + "/bInterfaceSubClass")
 			ifProto := readHexFile(ifPath + "/bInterfaceProtocol")
 
-			fmt.Printf("Found interface %s: class=0x%02x sub=0x%02x proto=0x%02x\n",
+			fmt.Printf("Found interface %s: class=%d sub=%d proto=%d\n",
 				name, ifClass, ifSub, ifProto)
 
 			if ifClass == BlockIFClass && ifSub == BlockIFSubClass && ifProto == BlockIFProtocol {
